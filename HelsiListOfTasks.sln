@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelsiListOfTasks.Domain", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelsiListOfTasks.Infrastructure", "HelsiListOfTasks.Infrastructure\HelsiListOfTasks.Infrastructure.csproj", "{8DFB6339-6D14-42EF-BF3E-2B3F7E2800B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelsiListOfTasks.Tests", "HelsiListOfTasks.Tests\HelsiListOfTasks.Tests.csproj", "{95BFE5F8-6E3F-46FE-AAF0-F3FEC7E4496E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{8DFB6339-6D14-42EF-BF3E-2B3F7E2800B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DFB6339-6D14-42EF-BF3E-2B3F7E2800B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DFB6339-6D14-42EF-BF3E-2B3F7E2800B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95BFE5F8-6E3F-46FE-AAF0-F3FEC7E4496E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95BFE5F8-6E3F-46FE-AAF0-F3FEC7E4496E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95BFE5F8-6E3F-46FE-AAF0-F3FEC7E4496E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95BFE5F8-6E3F-46FE-AAF0-F3FEC7E4496E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
