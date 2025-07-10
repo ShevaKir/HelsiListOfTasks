@@ -1,32 +1,40 @@
 using HelsiListOfTasks.Domain.Models;
 using HelsiListOfTasks.Domain.Repositories;
+using MongoDB.Driver;
 
 namespace HelsiListOfTasks.Infrastructure.Mongo;
 
-public class MongoTaskListRepository : ITaskListRepository
+public class MongoTaskListRepository(MongoDbContext context) : ITaskListRepository
 {
-    public Task<List<TaskList>> GetAccessibleListsAsync(int userId)
+    private readonly IMongoCollection<TaskList> _collection = context.TaskLists;
+
+    public Task<TaskList> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return _collection
+            .Find(x => x.Id == id)
+            .FirstOrDefaultAsync();
     }
 
-    public Task<TaskList?> GetByIdAsync(int id)
+    public Task<List<TaskList>> GetByOwnerAsync(int ownerId)
     {
-        throw new NotImplementedException();
+        return _collection
+            .Find(x => x.OwnerId == ownerId)
+            .SortByDescending(x => x.CreatedAt)
+            .ToListAsync();
     }
 
     public Task CreateAsync(TaskList list)
     {
-        throw new NotImplementedException();
+        return _collection.InsertOneAsync(list);
     }
 
     public Task UpdateAsync(TaskList list)
     {
-        throw new NotImplementedException();
+        return _collection.ReplaceOneAsync(x => x.Id == list.Id, list);
     }
 
     public Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        return _collection.DeleteOneAsync(x => x.Id == id);
     }
 }
