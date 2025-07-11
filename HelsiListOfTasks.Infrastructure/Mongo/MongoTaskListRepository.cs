@@ -28,13 +28,15 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
         return _collection.InsertOneAsync(list);
     }
 
-    public Task UpdateAsync(TaskList list)
+    public async Task<bool> UpdateAsync(TaskList list)
     {
-        return _collection.ReplaceOneAsync(x => x.Id == list.Id, list);
+        var result = await _collection.ReplaceOneAsync(x => x.Id == list.Id, list);
+        return result.IsAcknowledged && result.ModifiedCount > 0;
     }
 
-    public Task DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return _collection.DeleteOneAsync(x => x.Id == id);
+        var result = await _collection.DeleteOneAsync(x => x.Id == id);
+        return result.IsAcknowledged && result.DeletedCount > 0;
     }
 }

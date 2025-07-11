@@ -7,6 +7,6 @@ public interface ITaskListRepository
     Task<TaskList> GetByIdAsync(int id);
     Task<List<TaskList>> GetByOwnerAsync(int ownerId);
     Task CreateAsync(TaskList list);
-    Task UpdateAsync(TaskList list);
-    Task DeleteAsync(int id);
+    Task<bool> UpdateAsync(TaskList list);
+    Task<bool> DeleteAsync(int id);
 }
