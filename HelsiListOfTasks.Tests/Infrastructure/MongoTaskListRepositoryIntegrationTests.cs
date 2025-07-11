@@ -2,7 +2,7 @@ using HelsiListOfTasks.Domain.Models;
 using HelsiListOfTasks.Infrastructure.Mongo;
 using MongoDB.Driver;
 
-namespace HelsiListOfTasks.Tests;
+namespace HelsiListOfTasks.Tests.Infrastructure;
 
 public class MongoTaskListRepositoryIntegrationTests
 {
