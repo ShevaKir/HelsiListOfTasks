@@ -1,4 +1,10 @@
+using HelsiListOfTasks.Application.Interfaces;
+using HelsiListOfTasks.Application.Services;
+using HelsiListOfTasks.Domain.Repositories;
+using HelsiListOfTasks.Infrastructure.Mongo;
+using HelsiListOfTasks.WebApi.Extensions;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 
 namespace HelsiListOfTasks.WebApi;
 
@@ -19,6 +25,10 @@ public static class Program
                 Version = "v1"
             });
         });
+        
+        builder.Services.AddMongoDb(builder.Configuration, builder.Environment.IsDevelopment());
+        builder.Services.AddScoped<ITaskListService, TaskListService>();
+        builder.Services.AddScoped<ITaskListRepository, MongoTaskListRepository>();
 
         var app = builder.Build();
 
