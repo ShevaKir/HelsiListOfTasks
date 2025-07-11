@@ -10,7 +10,7 @@ public class TaskList
     public string Id { get; init; }
 
     public string Title { get; set; }
-    public int OwnerId { get; init; }
+    public string OwnerId { get; init; }
     public DateTime CreatedAt { get; set; }
     public List<int> SharedWithUserIds { get; set; }
 }

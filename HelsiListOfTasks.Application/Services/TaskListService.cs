@@ -12,7 +12,7 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
         return taskList;
     }
 
-    public async Task<TaskList?> GetByIdAsync(string id, int userId)
+    public async Task<TaskList?> GetByIdAsync(string id, string userId)
     {
         var list = await repository.GetByIdAsync(id);
         if (list is null || list.OwnerId != userId)
@@ -21,12 +21,12 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
         return list;
     }
 
-    public Task<List<TaskList>> GetForUserAsync(int userId)
+    public Task<List<TaskList>> GetForUserAsync(string userId)
     {
         return repository.GetByOwnerAsync(userId);
     }
 
-    public async Task<bool> UpdateAsync(TaskList updatedList, int userId)
+    public async Task<bool> UpdateAsync(TaskList updatedList, string userId)
     {
         var existing = await repository.GetByIdAsync(updatedList.Id);
         if (existing is null || existing.OwnerId != userId)
@@ -35,7 +35,7 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
         return await repository.UpdateAsync(updatedList);
     }
 
-    public async Task<bool> DeleteAsync(string id, int userId)
+    public async Task<bool> DeleteAsync(string id, string userId)
     {
         var existing = await repository.GetByIdAsync(id);
         if (existing is null || existing.OwnerId != userId)

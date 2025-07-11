@@ -11,7 +11,7 @@ public class TaskListsController(ITaskListService service) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTaskListRequest request,
-        [FromHeader(Name = "X-User-Id")] int? userId)
+        [FromHeader(Name = "X-User-Id")] string? userId)
     {
         if (userId is null)
             return BadRequest("Missing X-User-Id header");
@@ -19,7 +19,7 @@ public class TaskListsController(ITaskListService service) : ControllerBase
         var taskList = new TaskList
         {
             Title = request.Title,
-            OwnerId = userId.Value,
+            OwnerId = userId,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -29,7 +29,7 @@ public class TaskListsController(ITaskListService service) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id, [FromQuery] int userId)
+    public async Task<IActionResult> GetById(string id, [FromQuery] string userId)
     {
         var result = await service.GetByIdAsync(id, userId);
         if (result is null) return NotFound();

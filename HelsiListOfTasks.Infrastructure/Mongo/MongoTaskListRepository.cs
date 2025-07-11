@@ -15,7 +15,7 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
             .FirstOrDefaultAsync()!;
     }
 
-    public Task<List<TaskList>> GetByOwnerAsync(int ownerId)
+    public Task<List<TaskList>> GetByOwnerAsync(string ownerId)
     {
         return _collection
             .Find(x => x.OwnerId == ownerId)
