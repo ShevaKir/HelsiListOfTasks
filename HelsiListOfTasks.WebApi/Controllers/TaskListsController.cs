@@ -10,18 +10,16 @@ namespace HelsiListOfTasks.WebApi.Controllers;
 public class TaskListsController(ITaskListService service) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTaskListRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateTaskListRequest request,
+        [FromHeader(Name = "X-User-Id")] int? userId)
     {
-        if (!Request.Headers.TryGetValue("X-User-Id", out var userIdHeader) ||
-            !int.TryParse(userIdHeader, out var userId))
-        {
-            return BadRequest("Missing or invalid X-User-Id header");
-        }
+        if (userId is null)
+            return BadRequest("Missing X-User-Id header");
 
         var taskList = new TaskList
         {
             Title = request.Title,
-            OwnerId = userId,
+            OwnerId = userId.Value,
             CreatedAt = DateTime.UtcNow
         };
 

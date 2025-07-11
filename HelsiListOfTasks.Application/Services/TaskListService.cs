@@ -8,7 +8,6 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
 {
     public async Task<TaskList> CreateAsync(TaskList taskList)
     {
-        taskList.CreatedAt = DateTime.UtcNow;
         await repository.CreateAsync(taskList);
         return taskList;
     }

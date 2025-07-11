@@ -8,11 +8,11 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
 {
     private readonly IMongoCollection<TaskList> _collection = context.TaskLists;
 
-    public Task<TaskList> GetByIdAsync(string id)
+    public Task<TaskList?> GetByIdAsync(string id)
     {
         return _collection
             .Find(x => x.Id == id)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync()!;
     }
 
     public Task<List<TaskList>> GetByOwnerAsync(int ownerId)
