@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace HelsiListOfTasks.Tests;
 
-public class MongoTaskListRepositoryTests
+public class MongoTaskListRepositoryIntegrationTests
 {
     private MongoClient _client;
     private IMongoDatabase _database;
