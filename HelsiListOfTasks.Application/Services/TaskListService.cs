@@ -16,7 +16,10 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
     public async Task<TaskList?> GetByIdAsync(int id, int userId)
     {
         var list = await repository.GetByIdAsync(id);
-        return list.OwnerId != userId ? null : list;
+        if (list is null || list.OwnerId != userId)
+            return null;
+
+        return list;
     }
 
     public Task<List<TaskList>> GetForUserAsync(int userId)
@@ -27,7 +30,8 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
     public async Task<bool> UpdateAsync(TaskList updatedList, int userId)
     {
         var existing = await repository.GetByIdAsync(updatedList.Id);
-        if (existing.OwnerId != userId) return false;
+        if (existing is null || existing.OwnerId != userId)
+            return false;
 
         return await repository.UpdateAsync(updatedList);
     }
@@ -35,7 +39,8 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
     public async Task<bool> DeleteAsync(int id, int userId)
     {
         var existing = await repository.GetByIdAsync(id);
-        if (existing.OwnerId != userId) return false;
+        if (existing is null || existing.OwnerId != userId)
+            return false;
 
         return await repository.DeleteAsync(id);
     }

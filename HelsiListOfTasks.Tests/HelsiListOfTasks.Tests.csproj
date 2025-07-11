@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\HelsiListOfTasks.Application\HelsiListOfTasks.Application.csproj" />
       <ProjectReference Include="..\HelsiListOfTasks.Domain\HelsiListOfTasks.Domain.csproj" />
       <ProjectReference Include="..\HelsiListOfTasks.Infrastructure\HelsiListOfTasks.Infrastructure.csproj" />
     </ItemGroup>
