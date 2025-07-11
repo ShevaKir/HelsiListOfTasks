@@ -4,7 +4,6 @@ using HelsiListOfTasks.Domain.Repositories;
 using HelsiListOfTasks.Infrastructure.Mongo;
 using HelsiListOfTasks.WebApi.Extensions;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
 
 namespace HelsiListOfTasks.WebApi;
 
