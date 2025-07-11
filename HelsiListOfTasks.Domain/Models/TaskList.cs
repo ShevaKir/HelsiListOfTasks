@@ -1,8 +1,14 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace HelsiListOfTasks.Domain.Models;
 
 public class TaskList
 {
-    public int Id { get; init; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; init; }
+
     public string Title { get; set; }
     public int OwnerId { get; init; }
     public DateTime CreatedAt { get; set; }

@@ -19,7 +19,7 @@ public class MongoTaskListRepositoryIntegrationTests
         [
             new TaskList
             {
-                Id = 1,
+                Id = "1",
                 Title = "Task 1",
                 OwnerId = 100,
                 CreatedAt = DateTime.UtcNow.AddDays(-5),
@@ -28,7 +28,7 @@ public class MongoTaskListRepositoryIntegrationTests
 
             new TaskList
             {
-                Id = 2,
+                Id = "2",
                 Title = "Task 2",
                 OwnerId = 100,
                 CreatedAt = DateTime.UtcNow.AddDays(-3),
@@ -37,7 +37,7 @@ public class MongoTaskListRepositoryIntegrationTests
 
             new TaskList
             {
-                Id = 3,
+                Id = "3",
                 Title = "Task 3",
                 OwnerId = 101,
                 CreatedAt = DateTime.UtcNow.AddDays(-4),
@@ -46,7 +46,7 @@ public class MongoTaskListRepositoryIntegrationTests
 
             new TaskList
             {
-                Id = 4,
+                Id = "4",
                 Title = "Task 4",
                 OwnerId = 102,
                 CreatedAt = DateTime.UtcNow.AddDays(-2),
@@ -55,7 +55,7 @@ public class MongoTaskListRepositoryIntegrationTests
 
             new TaskList
             {
-                Id = 5,
+                Id = "5",
                 Title = "Task 5",
                 OwnerId = 100,
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
@@ -84,11 +84,11 @@ public class MongoTaskListRepositoryIntegrationTests
     [Test]
     public async Task GetByIdAsync_ShouldReturnCorrectTask()
     {
-        var task = await _repository.GetByIdAsync(3);
+        var task = await _repository.GetByIdAsync("3");
         Assert.That(task, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(task.Id, Is.EqualTo(3));
+            Assert.That(task.Id, Is.EqualTo("3"));
             Assert.That(task.Title, Is.EqualTo("Task 3"));
         });
     }
@@ -96,7 +96,7 @@ public class MongoTaskListRepositoryIntegrationTests
     [Test]
     public async Task GetByIdAsync_ShouldReturnNull_IfNotFound()
     {
-        var task = await _repository.GetByIdAsync(999);
+        var task = await _repository.GetByIdAsync("999");
         Assert.That(task, Is.Null);
     }
 
@@ -119,7 +119,7 @@ public class MongoTaskListRepositoryIntegrationTests
     [Test]
     public async Task CreateAsync_ShouldAddNewTask()
     {
-        var newTask = new TaskList { Id = 10, Title = "New Task", OwnerId = 103, CreatedAt = DateTime.UtcNow };
+        var newTask = new TaskList { Id = "10", Title = "New Task", OwnerId = 103, CreatedAt = DateTime.UtcNow };
         await _repository.CreateAsync(newTask);
 
         var fetched = await _repository.GetByIdAsync(newTask.Id);
@@ -131,13 +131,13 @@ public class MongoTaskListRepositoryIntegrationTests
     [Test]
     public async Task UpdateAsync_ShouldModifyExistingTask()
     {
-        var taskToUpdate = await _repository.GetByIdAsync(1);
+        var taskToUpdate = await _repository.GetByIdAsync("1");
         Assert.That(taskToUpdate, Is.Not.Null);
 
         taskToUpdate.Title = "Updated Title";
         await _repository.UpdateAsync(taskToUpdate);
 
-        var updatedTask = await _repository.GetByIdAsync(1);
+        var updatedTask = await _repository.GetByIdAsync("1");
         Assert.That(updatedTask, Is.Not.Null);
         Assert.That(updatedTask.Title, Is.EqualTo("Updated Title"));
     }
@@ -145,7 +145,7 @@ public class MongoTaskListRepositoryIntegrationTests
     [Test]
     public async Task DeleteAsync_ShouldRemoveTask()
     {
-        var existingTask = await _repository.GetByIdAsync(2);
+        var existingTask = await _repository.GetByIdAsync("2");
         Assert.That(existingTask, Is.Not.Null);
 
         await _repository.DeleteAsync(existingTask.Id);

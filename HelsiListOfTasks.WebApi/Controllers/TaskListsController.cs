@@ -1,5 +1,6 @@
 using HelsiListOfTasks.Application.Interfaces;
 using HelsiListOfTasks.Domain.Models;
+using HelsiListOfTasks.WebApi.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelsiListOfTasks.WebApi.Controllers;
@@ -9,14 +10,28 @@ namespace HelsiListOfTasks.WebApi.Controllers;
 public class TaskListsController(ITaskListService service) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] TaskList model)
+    public async Task<IActionResult> Create([FromBody] CreateTaskListRequest request)
     {
-        var result = await service.CreateAsync(model);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id, userId = result.OwnerId }, result);
+        if (!Request.Headers.TryGetValue("X-User-Id", out var userIdHeader) ||
+            !int.TryParse(userIdHeader, out var userId))
+        {
+            return BadRequest("Missing or invalid X-User-Id header");
+        }
+
+        var taskList = new TaskList
+        {
+            Title = request.Title,
+            OwnerId = userId,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        var result = await service.CreateAsync(taskList);
+
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id, [FromQuery] int userId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id, [FromQuery] int userId)
     {
         var result = await service.GetByIdAsync(id, userId);
         if (result is null) return NotFound();

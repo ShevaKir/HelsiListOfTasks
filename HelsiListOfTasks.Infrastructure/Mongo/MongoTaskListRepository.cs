@@ -8,7 +8,7 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
 {
     private readonly IMongoCollection<TaskList> _collection = context.TaskLists;
 
-    public Task<TaskList> GetByIdAsync(int id)
+    public Task<TaskList> GetByIdAsync(string id)
     {
         return _collection
             .Find(x => x.Id == id)
@@ -34,7 +34,7 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
         return result.IsAcknowledged && result.ModifiedCount > 0;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(string id)
     {
         var result = await _collection.DeleteOneAsync(x => x.Id == id);
         return result.IsAcknowledged && result.DeletedCount > 0;
