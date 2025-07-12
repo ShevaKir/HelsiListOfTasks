@@ -1,6 +1,6 @@
 namespace HelsiListOfTasks.WebApi.Requests;
 
-public class CreateTaskListRequest
+public class TaskListRequest
 {
     public string Title { get; set; } = default!;
 }

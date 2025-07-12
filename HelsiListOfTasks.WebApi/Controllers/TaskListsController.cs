@@ -10,7 +10,7 @@ namespace HelsiListOfTasks.WebApi.Controllers;
 public class TaskListsController(ITaskListService taskListService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTaskListRequest request,
+    public async Task<IActionResult> Create([FromBody] TaskListRequest request,
         [FromHeader(Name = "X-User-Id")] string? userId)
     {
         if (userId is null)
@@ -34,5 +34,33 @@ public class TaskListsController(ITaskListService taskListService) : ControllerB
         var result = await taskListService.GetByIdAsync(id, userId);
         if (result is null) return NotFound();
         return Ok(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetForUser([FromHeader(Name = "X-User-Id")] string? userId)
+    {
+        if (userId is null)
+            return BadRequest("Missing X-User-Id header");
+
+        var lists = await taskListService.GetForUserAsync(userId);
+        return Ok(lists);
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] TaskListRequest request,
+        [FromHeader(Name = "X-User-Id")] string? userId)
+    {
+        if (userId is null)
+            return BadRequest("Missing X-User-Id header");
+
+        var updated = new TaskList
+        {
+            Id = id,
+            Title = request.Title,
+            OwnerId = userId
+        };
+
+        var success = await taskListService.UpdateAsync(updated, userId);
+        return success ? Ok() : Forbid();
     }
 }
