@@ -11,9 +11,10 @@ public class UserService(IUserRepository userRepository, ITaskListRepository tas
         return userRepository.GetAll();
     }
 
-    public Task<User?> GetByIdAsync(string id)
+    public async Task<User?> GetByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        var user = await userRepository.GetByIdAsync(id);
+        return user;  
     }
 
     public async Task<User> CreateAsync(User user)

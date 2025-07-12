@@ -31,6 +31,29 @@ public class UserServiceTests
     }
     
     [Test]
+    public async Task GetByIdAsync_Should_ReturnUser()
+    {
+        var user = new User() { Id = "1", Name = "User 1" };
+        _userRepoMock.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(user);
+
+        var result = await _service.GetByIdAsync("1");
+
+        Assert.That(result, Is.EqualTo(user));
+    }
+
+
+    [Test]
+    public async Task GetByIdAsync_Should_ReturnNull()
+    {
+        var user = new User() { Id = "1", Name = "User"};
+        _userRepoMock.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(user);
+
+        var result = await _service.GetByIdAsync("2");
+
+        Assert.That(result, Is.Null);
+    }
+    
+    [Test]
     public async Task CreateAsync_ShouldCallRepository()
     {
         var user = new User { Name = "New User" };

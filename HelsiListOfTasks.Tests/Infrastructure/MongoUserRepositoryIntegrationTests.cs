@@ -1,5 +1,6 @@
 using HelsiListOfTasks.Domain.Models;
 using HelsiListOfTasks.Infrastructure.Mongo;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace HelsiListOfTasks.Tests.Infrastructure;
@@ -59,6 +60,30 @@ public class MongoUserRepositoryIntegrationTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Count, Is.EqualTo(3));
         Assert.That(result.Select(u => u.Name), Is.EquivalentTo(_users.Select(u => u.Name)));
+    }
+    
+    [Test]
+    public async Task GetByIdAsync_ShouldReturnCorrectTask()
+    {
+        var task1 = _users.First(x => x.Name == "User 1");
+        var task = await _repository.GetByIdAsync(task1.Id);
+
+        Assert.That(task, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(task.Id, Is.EqualTo(task1.Id));
+            Assert.That(task1.Name, Is.EqualTo("User 1"));
+        });
+    }
+
+    [Test]
+    public async Task GetByIdAsync_ShouldReturnNull_IfNotFound()
+    {
+        var fakeId = ObjectId.GenerateNewId().ToString();
+
+        var result = await _repository.GetByIdAsync(fakeId);
+
+        Assert.That(result, Is.Null);
     }
 
     [Test]
