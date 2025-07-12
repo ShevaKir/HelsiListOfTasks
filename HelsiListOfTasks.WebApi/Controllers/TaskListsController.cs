@@ -7,11 +7,11 @@ namespace HelsiListOfTasks.WebApi.Controllers;
 
 [ApiController]
 [Route("tasklists")]
-public class TaskListsController(ITaskListService service) : ControllerBase
+public class TaskListsController(ITaskListService taskListService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTaskListRequest request,
-        [FromHeader(Name = "X-User-Id")] int? userId)
+    public async Task<IActionResult> Create([FromBody] TaskListRequest request,
+        [FromHeader(Name = "X-User-Id")] string? userId)
     {
         if (userId is null)
             return BadRequest("Missing X-User-Id header");
@@ -19,20 +19,48 @@ public class TaskListsController(ITaskListService service) : ControllerBase
         var taskList = new TaskList
         {
             Title = request.Title,
-            OwnerId = userId.Value,
+            OwnerId = userId,
             CreatedAt = DateTime.UtcNow
         };
 
-        var result = await service.CreateAsync(taskList);
+        var result = await taskListService.CreateAsync(taskList);
 
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id, [FromQuery] int userId)
+    public async Task<IActionResult> GetById(string id, [FromQuery] string userId)
     {
-        var result = await service.GetByIdAsync(id, userId);
+        var result = await taskListService.GetByIdAsync(id, userId);
         if (result is null) return NotFound();
         return Ok(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetForUser([FromHeader(Name = "X-User-Id")] string? userId)
+    {
+        if (userId is null)
+            return BadRequest("Missing X-User-Id header");
+
+        var lists = await taskListService.GetForUserAsync(userId);
+        return Ok(lists);
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] TaskListRequest request,
+        [FromHeader(Name = "X-User-Id")] string? userId)
+    {
+        if (userId is null)
+            return BadRequest("Missing X-User-Id header");
+
+        var updated = new TaskList
+        {
+            Id = id,
+            Title = request.Title,
+            OwnerId = userId
+        };
+
+        var success = await taskListService.UpdateAsync(updated, userId);
+        return success ? Ok() : Forbid();
     }
 }

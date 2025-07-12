@@ -27,35 +27,35 @@ public class MongoTaskListRepositoryIntegrationTests
             new TaskList
             {
                 Title = "Task 1",
-                OwnerId = 100,
+                OwnerId = "100",
                 CreatedAt = DateTime.UtcNow.AddDays(-5),
                 SharedWithUserIds = [200, 201]
             },
             new TaskList
             {
                 Title = "Task 2",
-                OwnerId = 100,
+                OwnerId = "100",
                 CreatedAt = DateTime.UtcNow.AddDays(-3),
                 SharedWithUserIds = [202]
             },
             new TaskList
             {
                 Title = "Task 3",
-                OwnerId = 101,
+                OwnerId = "101",
                 CreatedAt = DateTime.UtcNow.AddDays(-4),
                 SharedWithUserIds = [200, 203]
             },
             new TaskList
             {
                 Title = "Task 4",
-                OwnerId = 102,
+                OwnerId = "102",
                 CreatedAt = DateTime.UtcNow.AddDays(-2),
                 SharedWithUserIds = []
             },
             new TaskList
             {
                 Title = "Task 5",
-                OwnerId = 100,
+                OwnerId = "100",
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
                 SharedWithUserIds = [201, 202, 203]
             }
@@ -104,7 +104,7 @@ public class MongoTaskListRepositoryIntegrationTests
     [Test]
     public async Task GetByOwnerAsync_ShouldReturnTasksSortedDescendingByCreatedAt()
     {
-        int ownerId = 100;
+        const string ownerId = "100";
         var expected = _taskLists
             .Where(x => x.OwnerId == ownerId)
             .OrderByDescending(x => x.CreatedAt)
@@ -112,9 +112,9 @@ public class MongoTaskListRepositoryIntegrationTests
 
         var actual = await _repository.GetByOwnerAsync(ownerId);
 
-        Assert.That(actual.Count, Is.EqualTo(expected.Count));
+        Assert.That(actual, Has.Count.EqualTo(expected.Count));
 
-        for (int i = 0; i < expected.Count; i++)
+        for (var i = 0; i < expected.Count; i++)
         {
             Assert.That(actual[i].Id, Is.EqualTo(expected[i].Id));
         }
@@ -126,7 +126,7 @@ public class MongoTaskListRepositoryIntegrationTests
         var newTask = new TaskList
         {
             Title = "New Task",
-            OwnerId = 103,
+            OwnerId = "103",
             CreatedAt = DateTime.UtcNow
         };
 
@@ -135,8 +135,13 @@ public class MongoTaskListRepositoryIntegrationTests
         var fromDb = await _repository.GetByIdAsync(newTask.Id);
 
         Assert.That(fromDb, Is.Not.Null);
-        Assert.That(fromDb.Title, Is.EqualTo("New Task"));
-        Assert.That(fromDb.OwnerId, Is.EqualTo(103));
+        Assert.Multiple(() =>
+        {
+            Assert.That(fromDb.Title, Is.EqualTo("New Task"));
+        });
+        
+        Assert.That(fromDb.OwnerId, Is.EqualTo("103"));
+
     }
 
     [Test]
@@ -149,7 +154,7 @@ public class MongoTaskListRepositoryIntegrationTests
         Assert.That(result, Is.True);
 
         var updated = await _repository.GetByIdAsync(original.Id);
-        Assert.That(updated.Title, Is.EqualTo("Updated Task 1"));
+        Assert.That(updated?.Title, Is.EqualTo("Updated Task 1"));
     }
 
     [Test]

@@ -5,8 +5,8 @@ namespace HelsiListOfTasks.Application.Interfaces;
 public interface ITaskListService
 {
     Task<TaskList> CreateAsync(TaskList taskList);
-    Task<TaskList?> GetByIdAsync(string id, int userId);
-    Task<List<TaskList>> GetForUserAsync(int userId);
-    Task<bool> UpdateAsync(TaskList updatedList, int userId);
-    Task<bool> DeleteAsync(string id, int userId);
+    Task<TaskList?> GetByIdAsync(string id, string userId);
+    Task<List<TaskList>> GetForUserAsync(string userId);
+    Task<bool> UpdateAsync(TaskList updatedList, string userId);
+    Task<bool> DeleteAsync(string id, string userId);
 }
