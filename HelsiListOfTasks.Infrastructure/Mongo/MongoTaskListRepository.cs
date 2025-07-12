@@ -25,6 +25,7 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
 
     public Task CreateAsync(TaskList list)
     {
+        //TODO: Check if there is a user who wants to create a task 
         return _collection.InsertOneAsync(list);
     }
 
