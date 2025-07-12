@@ -10,7 +10,7 @@ namespace HelsiListOfTasks.WebApi.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
+    public async Task<IActionResult> Create([FromBody] UserRequest request)
     {
         var user = new User()
         {
