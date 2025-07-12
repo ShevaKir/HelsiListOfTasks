@@ -11,9 +11,15 @@ public class UserService(IUserRepository userRepository, ITaskListRepository tas
         return userRepository.GetAll();
     }
 
-    public Task CreateAsync(User user)
+    public Task<User?> GetByIdAsync(string id)
     {
-        return userRepository.CreateAsync(user);
+        throw new NotImplementedException();
+    }
+
+    public async Task<User> CreateAsync(User user)
+    {
+        await userRepository.CreateAsync(user);
+        return user;
     }
 
     public async Task<bool> DeleteAsync(string id)

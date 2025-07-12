@@ -7,7 +7,7 @@ namespace HelsiListOfTasks.WebApi.Controllers;
 
 [ApiController]
 [Route("tasklists")]
-public class TaskListsController(ITaskListService service) : ControllerBase
+public class TaskListsController(ITaskListService taskListService) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTaskListRequest request,
@@ -23,7 +23,7 @@ public class TaskListsController(ITaskListService service) : ControllerBase
             CreatedAt = DateTime.UtcNow
         };
 
-        var result = await service.CreateAsync(taskList);
+        var result = await taskListService.CreateAsync(taskList);
 
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
@@ -31,7 +31,7 @@ public class TaskListsController(ITaskListService service) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id, [FromQuery] string userId)
     {
-        var result = await service.GetByIdAsync(id, userId);
+        var result = await taskListService.GetByIdAsync(id, userId);
         if (result is null) return NotFound();
         return Ok(result);
     }
