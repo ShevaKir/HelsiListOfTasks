@@ -112,9 +112,9 @@ public class MongoTaskListRepositoryIntegrationTests
 
         var actual = await _repository.GetByOwnerAsync(ownerId);
 
-        Assert.That(actual.Count, Is.EqualTo(expected.Count));
+        Assert.That(actual, Has.Count.EqualTo(expected.Count));
 
-        for (int i = 0; i < expected.Count; i++)
+        for (var i = 0; i < expected.Count; i++)
         {
             Assert.That(actual[i].Id, Is.EqualTo(expected[i].Id));
         }
@@ -138,8 +138,10 @@ public class MongoTaskListRepositoryIntegrationTests
         Assert.Multiple(() =>
         {
             Assert.That(fromDb.Title, Is.EqualTo("New Task"));
-            Assert.That(fromDb.OwnerId, Is.EqualTo(103));
         });
+        
+        Assert.That(fromDb.OwnerId, Is.EqualTo("103"));
+
     }
 
     [Test]
