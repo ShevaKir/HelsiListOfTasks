@@ -9,6 +9,7 @@ namespace HelsiListOfTasks.WebApi.Controllers;
 [Route("users")]
 public class UserController(IUserService userService) : ControllerBase
 {
+    [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
     {
         var user = new User()
@@ -25,5 +26,19 @@ public class UserController(IUserService userService) : ControllerBase
     {
         var user = await userService.GetByIdAsync(id);
         return user is not null ? Ok(user) : NotFound();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var success = await userService.DeleteAsync(id);
+        return success ? NoContent() : NotFound();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var users = await userService.GetAllAsync();
+        return Ok(users);
     }
 }

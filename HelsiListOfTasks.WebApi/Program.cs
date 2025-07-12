@@ -27,10 +27,10 @@ public static class Program
         
         builder.Services.AddMongoDb(builder.Configuration, builder.Environment.IsDevelopment());
         builder.Services.AddScoped<ITaskListService, TaskListService>();
+        builder.Services.AddScoped<ITaskListRepository, MongoTaskListRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IUserRepository, MongoUserRepository>();
-        builder.Services.AddScoped<ITaskListRepository, MongoTaskListRepository>();
-
+        
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
