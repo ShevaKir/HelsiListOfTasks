@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HelsiListOfTasks.WebApi.Controllers;
 
 [ApiController]
-[Route("tasklists")]
+[Route("task-lists")]
 public class TaskListsController(ITaskListService taskListService) : ControllerBase
 {
     [HttpPost]
