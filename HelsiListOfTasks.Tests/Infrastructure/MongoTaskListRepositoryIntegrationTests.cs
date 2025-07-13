@@ -29,21 +29,21 @@ public class MongoTaskListRepositoryIntegrationTests
                 Title = "Task 1",
                 OwnerId = "100",
                 CreatedAt = DateTime.UtcNow.AddDays(-5),
-                SharedWithUserIds = [200, 201]
+                SharedWithUserIds = ["200", "201"]
             },
             new TaskList
             {
                 Title = "Task 2",
                 OwnerId = "100",
                 CreatedAt = DateTime.UtcNow.AddDays(-3),
-                SharedWithUserIds = [202]
+                SharedWithUserIds = ["202"]
             },
             new TaskList
             {
                 Title = "Task 3",
                 OwnerId = "101",
                 CreatedAt = DateTime.UtcNow.AddDays(-4),
-                SharedWithUserIds = [200, 203]
+                SharedWithUserIds = ["200", "203"]
             },
             new TaskList
             {
@@ -57,7 +57,7 @@ public class MongoTaskListRepositoryIntegrationTests
                 Title = "Task 5",
                 OwnerId = "100",
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
-                SharedWithUserIds = [201, 202, 203]
+                SharedWithUserIds = ["201", "202", "203"]
             }
         };
 
