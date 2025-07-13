@@ -1,0 +1,15 @@
+@model List<HelsiListOfTasks.Domain.Models.User>
+
+<div class="user-cards">
+    @foreach (var user in Model)
+    {
+        <div class="user-card">
+            <h4>@user.Name</h4>
+            <p>ID: @user.Id</p>
+        </div>
+    }
+</div>
+<form id="user-form">
+    <input type="text" id="user-name" placeholder="Name" required />
+    <button type="submit">Add</button>
+</form>
