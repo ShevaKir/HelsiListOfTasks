@@ -15,7 +15,7 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
     public async Task<TaskList?> GetByIdAsync(string id, string userId)
     {
         var list = await repository.GetByIdAsync(id);
-        if (list is null || list.OwnerId != userId)
+        if (list is null || (list.OwnerId != userId && !list.SharedWithUserIds.Contains(userId)))
             return null;
 
         return list;
@@ -23,7 +23,7 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
 
     public Task<List<TaskList>> GetForUserAsync(string userId)
     {
-        return repository.GetByOwnerAsync(userId);
+        return repository.GetAccessibleListsAsync(userId);
     }
 
     public async Task<bool> UpdateAsync(TaskList updatedList, string userId)
