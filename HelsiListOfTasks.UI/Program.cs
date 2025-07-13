@@ -1,3 +1,6 @@
+using HelsiListOfTasks.UI.Interfaces;
+using HelsiListOfTasks.UI.Services;
+
 namespace HelsiListOfTasks.UI;
 
 public static class Program
@@ -8,6 +11,14 @@ public static class Program
 
         // Add services to the container.
         builder.Services.AddRazorPages();
+        builder.Services.AddHttpClient("WebApi",
+            client => { client.BaseAddress = new Uri("https://localhost:7025/"); });
+        builder.Services.AddScoped<IUserService, UserService>(sp =>
+        {
+            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+            var httpClient = httpClientFactory.CreateClient("WebApi");
+            return new UserService(httpClient);
+        });
 
         var app = builder.Build();
 

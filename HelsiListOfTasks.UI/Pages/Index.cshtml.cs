@@ -1,18 +1,17 @@
-using Microsoft.AspNetCore.Mvc;
+using HelsiListOfTasks.Domain.Models;
+using HelsiListOfTasks.UI.Interfaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HelsiListOfTasks.UI.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel(ILogger<IndexModel> logger, IUserService userService) : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
+    private readonly ILogger<IndexModel> _logger = logger;
 
-    public IndexModel(ILogger<IndexModel> logger)
-    {
-        _logger = logger;
-    }
+    public List<User> Users { get; private set; } = [];
 
-    public void OnGet()
+    public async Task OnGetAsync()
     {
+        Users = await userService.GetUsersAsync();
     }
 }

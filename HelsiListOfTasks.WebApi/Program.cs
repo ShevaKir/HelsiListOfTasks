@@ -25,6 +25,16 @@ public static class Program
             });
         });
         
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("https://localhost:7110")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+        
         builder.Services.AddMongoDb(builder.Configuration, builder.Environment.IsDevelopment());
         builder.Services.AddScoped<ITaskListService, TaskListService>();
         builder.Services.AddScoped<ITaskListRepository, MongoTaskListRepository>();
@@ -40,6 +50,7 @@ public static class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors("AllowFrontend");
 
         app.MapControllers();
 
