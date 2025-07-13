@@ -1,0 +1,38 @@
+@page "/task-lists"
+@model HelsiListOfTasks.UI.Pages.TaskListsPageModel
+@{
+    ViewData["Title"] = "Task Lists";
+}
+
+<h2>Task Lists</h2>
+
+@if (Model.TaskLists?.Any() == true)
+{
+    <div class="task-lists-collection">
+        @foreach (var taskList in Model.TaskLists)
+        {
+            <div class="task-lists">
+                <h4>@taskList.Title</h4>
+                <p>Created At: @taskList.CreatedAt</p>
+                @if (taskList.SharedWithUserIds.Count != 0)
+                {
+                    <p>Sharing Users:</p>
+                    <ul>
+                        @foreach (var sharingUser in taskList.SharedWithUserIds)
+                        {
+                            <li>sharingUser</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>The task list is only available to you.</p>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No task lists found.</p>
+}

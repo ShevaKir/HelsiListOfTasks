@@ -13,5 +13,6 @@ public class TaskList
     
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public List<string> SharedWithUserIds { get; set; }
+
+    public List<string> SharedWithUserIds { get; set; } = [];
 }

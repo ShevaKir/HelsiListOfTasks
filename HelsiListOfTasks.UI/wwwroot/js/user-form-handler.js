@@ -16,8 +16,14 @@ export class UserFormHandler {
             const id = card.getAttribute("data-id");
             const deleteBtn = card.querySelector(".user-card-delete");
             if (id && deleteBtn) {
-                deleteBtn.addEventListener("click", async () => {
+                deleteBtn.addEventListener("click", async (e) => {
+                    e.stopPropagation();
                     await this.deleteUser(id, card);
+                });
+            }
+            if (id) {
+                card.addEventListener("click", () => {
+                    window.location.href = `/task-lists?userId=${id}`;
                 });
             }
         });
@@ -83,6 +89,10 @@ export class UserFormHandler {
         const deleteBtn = card.querySelector(".user-card-delete");
         deleteBtn.addEventListener("click", async () => {
             await this.deleteUser(user.id, card);
+        });
+
+        card.addEventListener("click", () => {
+            window.location.href = `/task-lists?userId=${user.id}`;
         });
 
         this.container.appendChild(card);
