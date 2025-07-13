@@ -15,6 +15,17 @@
     transition: transform 0.2s ease;
 }
 
+.user-card-delete {
+    display: flex;
+    justify-content: end;
+}
+
+.user-card-delete img{
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+}
+
 .user-card:hover {
     transform: scale(1.05);
 }

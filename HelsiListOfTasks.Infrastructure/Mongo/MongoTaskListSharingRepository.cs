@@ -11,14 +11,14 @@ public class MongoTaskListSharingRepository(MongoDbContext context) : ITaskListS
     public async Task AddShareAsync(string taskListId, string targetUserId)
     {
         var filter = Builders<TaskList>.Filter.Eq(x => x.Id, taskListId);
-        var update = Builders<TaskList>.Update.AddToSet<>(x => x.SharedWithUserIds, targetUserId);
+        var update = Builders<TaskList>.Update.AddToSet<string>(x => x.SharedWithUserIds, targetUserId);
         await _collection.UpdateOneAsync(filter, update);
     }
 
     public async Task RemoveShareAsync(string taskListId, string targetUserId)
     {
         var filter = Builders<TaskList>.Filter.Eq(x => x.Id, taskListId);
-        var update = Builders<TaskList>.Update.Pull<>(x => x.SharedWithUserIds, targetUserId);
+        var update = Builders<TaskList>.Update.Pull<string>(x => x.SharedWithUserIds, targetUserId);
         await _collection.UpdateOneAsync(filter, update);
     }
 

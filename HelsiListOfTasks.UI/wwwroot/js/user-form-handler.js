@@ -12,6 +12,16 @@ export class UserFormHandler {
             return;
         }
 
+        this.container.querySelectorAll(".user-card").forEach(card => {
+            const id = card.getAttribute("data-id");
+            const deleteBtn = card.querySelector(".user-card-delete");
+            if (id && deleteBtn) {
+                deleteBtn.addEventListener("click", async () => {
+                    await this.deleteUser(id, card);
+                });
+            }
+        });
+
         this.form.addEventListener("submit", this.handleSubmit.bind(this));
     }
 
@@ -42,13 +52,39 @@ export class UserFormHandler {
         }
     }
 
+    async deleteUser(id, cardElement) {
+        if (!confirm("Are you sure you want to delete the user?")) return;
+
+        try {
+            const response = await fetch(`${this.apiUrl}/${id}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) alert("Error removing user");
+
+            cardElement.remove();
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
     addUserCard(user) {
         const card = document.createElement("div");
         card.className = "user-card";
+        card.setAttribute("data-id", user.id);
         card.innerHTML = `
+            <div class="user-card-delete">
+                <img src="icons/delete.svg" alt="Delete">
+            </div>
             <h4>${user.name}</h4>
             <p>ID: ${user.id}</p>
         `;
+
+        const deleteBtn = card.querySelector(".user-card-delete");
+        deleteBtn.addEventListener("click", async () => {
+            await this.deleteUser(user.id, card);
+        });
+
         this.container.appendChild(card);
     }
 }
