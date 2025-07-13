@@ -36,6 +36,12 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
             .ToListAsync();
     }
 
+    public Task<List<TaskList>> GetAllWithSharedUserAsync(string userId)
+    {
+        var filter = Builders<TaskList>.Filter.AnyEq(x => x.SharedWithUserIds, userId);
+        return _collection.Find(filter).ToListAsync();
+    }
+
     public Task CreateAsync(TaskList list)
     {
         //TODO: Check if there is a user who wants to create a task 

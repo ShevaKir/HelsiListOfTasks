@@ -32,8 +32,13 @@ public class UserService(IUserRepository userRepository, ITaskListRepository tas
             await taskListRepository.DeleteAsync(taskList.Id);
         }
 
-        // TODO: Clean up SharedWithUserIds when feature is implemented
-
+        var allSharedLists = await taskListRepository.GetAllWithSharedUserAsync(id);
+        foreach (var sharedList in allSharedLists)
+        {
+            sharedList.SharedWithUserIds.Remove(id);
+            await taskListRepository.UpdateAsync(sharedList);
+        }
+        
         return await userRepository.DeleteAsync(id);
     }
 }
