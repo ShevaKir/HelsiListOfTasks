@@ -39,9 +39,9 @@ export class TaskListsHandler {
             await this.renderPage();
         });
 
-        this.form.addEventListener("submit", this.handleSubmit.bind(this));
-
         this.renderPage();
+
+        this.form.addEventListener("submit", this.handleSubmit.bind(this));
     }
 
     async renderPage() {
@@ -146,38 +146,97 @@ export class TaskListsHandler {
         await this.renderPage();
     }
 
+    async handleShare(taskListId) {
+        const userSelect = document.getElementById("user-select");
+        if (!userSelect) {
+            alert("User selector not found");
+            return;
+        }
+
+        userSelect.hidden = false;
+
+        const onChange = async () => {
+            const targetUserId = userSelect.value;
+            if (!targetUserId) return;
+
+            try {
+                const response = await fetch(`${this.apiUrl}/${taskListId}/sharing/${targetUserId}`, {
+                    method: "POST",
+                    headers: {
+                        "X-User-Id": this.userId
+                    }
+                });
+
+                if (!response.ok) {
+                    alert("Error sharing task list");
+                    return;
+                }
+
+                await this.renderPage();
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                userSelect.hidden = true;
+                userSelect.value = "";
+                userSelect.removeEventListener("change", onChange);
+            }
+        };
+
+        userSelect.removeEventListener("change", onChange);
+        userSelect.addEventListener("change", onChange);
+    }
+
+
     createTaskListElement(taskList) {
         const el = document.createElement("div");
         el.className = "task-lists";
         el.dataset.id = taskList.id;
+        el.dataset.ownerId = taskList.ownerId;
+
+        const isCollaborative = taskList.ownerId !== this.userId;
+        if (isCollaborative) el.classList.add("task-lists-collaboration");
 
         const sharedSection = (taskList.sharedWithUserIds?.length ?? 0) > 0
             ? `<p>Sharing Users:</p><ul>${taskList.sharedWithUserIds.map(id => `<li>${id}</li>`).join("")}</ul>`
             : `<p>The task list is only available to you.</p>`;
 
-        el.innerHTML = `
-            <div class="task-lists-controls">
-                <div class="task-lists-delete">
-                    <img src="icons/delete.svg" alt="Delete">
-                </div>
-                <div class="task-lists-edit">
-                    <img src="icons/edit.svg" alt="Edit">
-                </div>
-            </div>
-            <h4>${taskList.title}</h4>
-            <p>Created At: ${taskList.createdAt}</p>
-            ${sharedSection}
-        `;
+        const controlsHtml = isCollaborative ? "" : `
+        <div class="task-lists-share">
+            <img src="icons/share.svg" alt="Share">
+        </div>
+        <div class="task-lists-edit">
+            <img src="icons/edit.svg" alt="Edit">
+        </div>
+        <div class="task-lists-delete">
+            <img src="icons/delete.svg" alt="Delete">
+        </div>
+    `;
 
-        this.bindControls(el, taskList.id);
+        const collaborationNote = isCollaborative
+            ? `<p><strong>Collaborative (owned by ${taskList.ownerId})</strong></p>`
+            : "";
+
+        el.innerHTML = `
+        <div class="task-lists-controls">
+            ${controlsHtml}
+        </div>
+        <h4>${taskList.title}</h4>
+        <p>Created At: ${taskList.createdAt}</p>
+        ${collaborationNote}
+        ${sharedSection}
+    `;
+
+        if (!isCollaborative) this.bindControls(el, taskList.id);
         return el;
     }
+
 
     bindControls(el, id) {
         const deleteBtn = el.querySelector(".task-lists-delete");
         const editBtn = el.querySelector(".task-lists-edit");
         const titleEl = el.querySelector("h4");
         const controlsContainer = el.querySelector(".task-lists-controls");
+        const shareBtn = el.querySelector("#task-list-share");
 
         deleteBtn?.addEventListener("click", async () => await this.deleteTaskList(id));
 
@@ -219,6 +278,10 @@ export class TaskListsHandler {
                     alert(err.message);
                 }
             });
+        });
+
+        shareBtn?.addEventListener("click", async () => {
+            await this.handleShare(id);
         });
     }
 }

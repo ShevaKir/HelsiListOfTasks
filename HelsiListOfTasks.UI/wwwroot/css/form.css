@@ -12,6 +12,7 @@
 }
 
 .form-button {
+    cursor: pointer;
     color: white;
     background-color: #78c32d;
     border: none;
