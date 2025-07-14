@@ -59,9 +59,13 @@ public class TaskListsController(ITaskListService taskListService) : ControllerB
             Title = request.Title,
             OwnerId = userId
         };
-
+        
         var success = await taskListService.UpdateAsync(updated, userId);
-        return success ? Ok() : Forbid();
+
+        if (!success)
+            return Forbid();
+
+        return Ok(updated);
     }
 
     [HttpDelete("{id}")]

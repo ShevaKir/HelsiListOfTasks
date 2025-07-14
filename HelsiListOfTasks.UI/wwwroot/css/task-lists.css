@@ -9,12 +9,12 @@
     cursor: default;
 }
 
-.task-lists-delete {
+.task-lists-delete, .task-lists-edit {
     display: flex;
     justify-content: end;
 }
 
-.task-lists-delete img{
+.task-lists-delete img, .task-lists-edit img{
     height: 24px;
     width: 24px;
     cursor: pointer;
