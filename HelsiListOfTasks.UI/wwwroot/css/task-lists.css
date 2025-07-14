@@ -9,6 +9,17 @@
     cursor: default;
 }
 
+.task-lists-delete {
+    display: flex;
+    justify-content: end;
+}
+
+.task-lists-delete img{
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+}
+
 .task-lists:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);

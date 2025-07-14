@@ -1,4 +1,4 @@
-export class UserFormHandler {
+export class UserHandler {
     constructor({formId, inputId, apiUrl, containerSelector}) {
         this.form = document.getElementById(formId);
         this.input = document.getElementById(inputId);

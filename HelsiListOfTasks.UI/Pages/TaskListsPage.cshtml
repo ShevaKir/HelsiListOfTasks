@@ -5,34 +5,41 @@
 }
 
 <h2>Task Lists</h2>
-
-@if (Model.TaskLists?.Any() == true)
-{
-    <div class="task-lists-collection">
-        @foreach (var taskList in Model.TaskLists)
-        {
-            <div class="task-lists">
-                <h4>@taskList.Title</h4>
-                <p>Created At: @taskList.CreatedAt</p>
-                @if (taskList.SharedWithUserIds.Count != 0)
-                {
-                    <p>Sharing Users:</p>
-                    <ul>
-                        @foreach (var sharingUser in taskList.SharedWithUserIds)
-                        {
-                            <li>sharingUser</li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    <p>The task list is only available to you.</p>
-                }
+<div class="task-lists-collection">
+    @foreach (var taskList in Model.TaskLists)
+    {
+        <div class="task-lists" data-id="@taskList.Id">
+            <div class="task-lists-controls">
+                <div class="task-lists-delete" id="task-list-delete">
+                    <img src="icons/delete.svg" alt="Delete">
+                </div>
             </div>
-        }
-    </div>
-}
-else
-{
-    <p>No task lists found.</p>
+            <h4>@taskList.Title</h4>
+            <p>Created At: @taskList.CreatedAt</p>
+            @if (taskList.SharedWithUserIds.Count != 0)
+            {
+                <p>Sharing Users:</p>
+                <ul>
+                    @foreach (var sharingUser in taskList.SharedWithUserIds)
+                    {
+                        <li>@sharingUser</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>The task list is only available to you.</p>
+            }
+        </div>
+    }
+</div>
+
+
+<form id="task-lists-form">
+    <input type="text" id="task-lists-title" placeholder="Title" required/>
+    <button type="submit">Add</button>
+</form>
+
+@section Scripts {
+    <script type="module" src="~/js/task-lists-init.js" asp-append-version="true"></script>
 }

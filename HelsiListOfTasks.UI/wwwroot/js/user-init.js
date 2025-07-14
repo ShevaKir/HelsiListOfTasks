@@ -1,10 +1,10 @@
-import {UserFormHandler} from '/js/user-form-handler.js';
+import {UserHandler} from './user-handler.js';
 
-const handler = new UserFormHandler({
+const userHandler = new UserHandler({
     formId: 'user-form',
     inputId: 'user-name',
     apiUrl: 'https://localhost:7025/users',
     containerSelector: '.user-cards'
 });
 
-handler.init();
+userHandler.init();
