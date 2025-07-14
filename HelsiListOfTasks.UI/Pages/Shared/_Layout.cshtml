@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - HelsiListOfTasks.UI</title>
     <link rel="stylesheet" href="~/css/normalize.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/page.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/form.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/user.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/task-lists.css" asp-append-version="true"/>
 </head>
 <body>
-@RenderBody()
+<div class="wrapper">
+    @RenderBody()
+</div>
 <script type="module" src="~/js/user-init.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>

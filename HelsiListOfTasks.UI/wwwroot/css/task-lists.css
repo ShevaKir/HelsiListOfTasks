@@ -9,6 +9,30 @@
     cursor: default;
 }
 
+.task-lists-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.task-title-save {
+    color: white;
+    background-color: #78c32d;
+    border: none;
+    height: 24px;
+    width: 64px;
+    border-radius: 6px;
+}
+
+.task-title-cancel {
+    color: white;
+    background-color: #bc2e2e;
+    border: none;
+    height: 24px;
+    width: 64px;
+    border-radius: 6px;
+}
+
 .task-lists-delete, .task-lists-edit {
     display: flex;
     justify-content: end;
@@ -51,6 +75,17 @@
 .pagination-controls {
     display: flex;
     gap: 10px;
-    margin-top: 20px;
+    margin: 20px;
+    justify-content: center;
     align-items: center;
+}
+
+.pagination-button {
+    cursor: pointer;
+    background-color: #0957d0;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 48px;
+    height: 24px;
 }
