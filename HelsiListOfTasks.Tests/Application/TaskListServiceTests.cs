@@ -50,10 +50,10 @@ public class TaskListServiceTests
     }
 
     [Test]
-    public async Task GetForUserAsync_Should_ReturnUserLists()
+    public async Task GetForUserAsync_Should_ReturnAccessibleLists()
     {
         var lists = new List<TaskList> { new() { Id = "1", OwnerId = "123" } };
-        _repositoryMock.Setup(r => r.GetByOwnerAsync("123")).ReturnsAsync(lists);
+        _repositoryMock.Setup(r => r.GetAccessibleListsAsync("123")).ReturnsAsync(lists);
 
         var result = await _service.GetForUserAsync("123");
 

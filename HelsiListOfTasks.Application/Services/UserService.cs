@@ -33,9 +33,8 @@ public class UserService(IUserRepository userRepository, ITaskListRepository tas
         }
 
         var allSharedLists = await taskListRepository.GetAllWithSharedUserAsync(id);
-        foreach (var sharedList in allSharedLists)
+        foreach (var sharedList in allSharedLists.Where(sharedList => sharedList.SharedWithUserIds.Remove(id)))
         {
-            sharedList.SharedWithUserIds.Remove(id);
             await taskListRepository.UpdateAsync(sharedList);
         }
         

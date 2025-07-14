@@ -64,28 +64,44 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task DeleteAsync_ShouldDeleteUserAndTheirTaskLists()
+    public async Task DeleteAsync_ShouldDeleteUserAndTheirTaskLists_AndRemoveUserFromSharedLists()
     {
         const string userId = "123";
         var taskLists = new List<TaskList>
         {
-            new TaskList { Id = "1", OwnerId = "123" },
-            new TaskList { Id = "2", OwnerId = "123" }
+            new TaskList { Id = "1", OwnerId = userId },
+            new TaskList { Id = "2", OwnerId = userId }
         };
 
-        _taskListRepoMock.Setup(r => r.GetByOwnerAsync(It.IsAny<string>()))
-            .ReturnsAsync(taskLists);
-        _taskListRepoMock.Setup(r => r.DeleteAsync(It.IsAny<string>()))
-            .ReturnsAsync(true);
-        _userRepoMock.Setup(r => r.DeleteAsync(userId))
-            .ReturnsAsync(true);
+        var sharedLists = new List<TaskList>
+        {
+            new TaskList { Id = "3", OwnerId = "999", SharedWithUserIds = new List<string> { userId, "456" } },
+            new TaskList { Id = "4", OwnerId = "888", SharedWithUserIds = new List<string> { "456" } }
+        };
+
+        _taskListRepoMock.Setup(r => r.GetByOwnerAsync(userId)).ReturnsAsync(taskLists);
+        _taskListRepoMock.Setup(r => r.DeleteAsync(It.IsAny<string>())).ReturnsAsync(true);
+        _taskListRepoMock.Setup(r => r.GetAllWithSharedUserAsync(userId)).ReturnsAsync(sharedLists);
+        _taskListRepoMock.Setup(r => r.UpdateAsync(It.IsAny<TaskList>())).ReturnsAsync(true);
+        _userRepoMock.Setup(r => r.DeleteAsync(userId)).ReturnsAsync(true);
 
         var result = await _service.DeleteAsync(userId);
 
         Assert.That(result, Is.True);
-        _taskListRepoMock.Verify(r => r.GetByOwnerAsync(userId), Times.Once);
+
+        // Verify deletions
         _taskListRepoMock.Verify(r => r.DeleteAsync("1"), Times.Once);
         _taskListRepoMock.Verify(r => r.DeleteAsync("2"), Times.Once);
+
+        // Verify shared user cleanup
+        _taskListRepoMock.Verify(r => r.GetAllWithSharedUserAsync(userId), Times.Once);
+        _taskListRepoMock.Verify(r => r.UpdateAsync(It.Is<TaskList>(
+            l => l.Id == "3" && !l.SharedWithUserIds.Contains(userId))), Times.Once);
+        _taskListRepoMock.Verify(r => r.UpdateAsync(It.Is<TaskList>(
+            l => l.Id == "4")), Times.Never);
+
+        // Verify user deletion
         _userRepoMock.Verify(r => r.DeleteAsync(userId), Times.Once);
     }
+
 }

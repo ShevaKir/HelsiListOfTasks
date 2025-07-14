@@ -121,6 +121,56 @@ public class MongoTaskListRepositoryIntegrationTests
     }
 
     [Test]
+    public async Task GetAccessibleListsAsync_ShouldReturnOwnedAndSharedLists_SortedByCreatedAt()
+    {
+        var userId = "200";
+
+        var expected = _taskLists
+            .Where(x => x.OwnerId == userId || x.SharedWithUserIds.Contains(userId))
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => x.Id)
+            .ToList();
+
+        var result = await _repository.GetAccessibleListsAsync(userId);
+
+        var actual = result.Select(x => x.Id).ToList();
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task GetPagedForUserAsync_ShouldReturnCorrectPage()
+    {
+        var userId = "200";
+        var all = await _repository.GetAccessibleListsAsync(userId);
+
+        var expectedPage = all.Skip(0).Take(2).Select(x => x.Id).ToList();
+
+        var page = await _repository.GetPagedForUserAsync(userId, 0, 2);
+        var actual = page.Select(x => x.Id).ToList();
+
+        Assert.That(actual, Is.EqualTo(expectedPage));
+    }
+    
+    [Test]
+    public async Task GetAllWithSharedUserAsync_ShouldReturnOnlySharedLists()
+    {
+        var userId = "203";
+
+        var expected = _taskLists
+            .Where(x => x.SharedWithUserIds.Contains(userId))
+            .Select(x => x.Id)
+            .ToList();
+
+        var result = await _repository.GetAllWithSharedUserAsync(userId);
+        var actual = result.Select(x => x.Id).ToList();
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+
+
+    [Test]
     public async Task CreateAsync_ShouldAddNewTask()
     {
         var newTask = new TaskList
@@ -135,13 +185,9 @@ public class MongoTaskListRepositoryIntegrationTests
         var fromDb = await _repository.GetByIdAsync(newTask.Id);
 
         Assert.That(fromDb, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(fromDb.Title, Is.EqualTo("New Task"));
-        });
-        
-        Assert.That(fromDb.OwnerId, Is.EqualTo("103"));
+        Assert.Multiple(() => { Assert.That(fromDb.Title, Is.EqualTo("New Task")); });
 
+        Assert.That(fromDb.OwnerId, Is.EqualTo("103"));
     }
 
     [Test]
