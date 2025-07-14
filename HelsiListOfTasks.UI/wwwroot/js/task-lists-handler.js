@@ -1,52 +1,51 @@
 export class TaskListsHandler {
-    constructor({formId, inputId, apiUrl, containerSelector, pageSize = 3}) {
-        this.form = document.getElementById(formId);
-        this.input = document.getElementById(inputId);
+    constructor({
+                    formElement,
+                    inputElement,
+                    apiUrl,
+                    containerElement,
+                    prevPageButton,
+                    nextPageButton,
+                    pageNumberElement,
+                    pageSize = 3
+                }) {
+        this.form = formElement;
+        this.input = inputElement;
         this.apiUrl = apiUrl;
-        this.container = document.querySelector(containerSelector);
+        this.container = containerElement;
+        this.prevBtn = prevPageButton;
+        this.nextBtn = nextPageButton;
+        this.pageNumber = pageNumberElement;
         this.userId = new URLSearchParams(window.location.search).get("userId");
-        
         this.pageSize = pageSize;
         this.currentPage = 1;
-
-        this.prevBtn = document.getElementById("prev-page");
-        this.nextBtn = document.getElementById("next-page");
-        this.pageNumber = document.getElementById("page-number");
     }
 
     init() {
-        if (!this.form || !this.input || !this.container) {
-            console.warn("TaskListsHandler: No form or container found");
+        if (!this.form || !this.input || !this.container || !this.userId) {
+            console.warn("TaskListsHandler: Missing required elements or userId");
             return;
         }
 
-        if (!this.userId) {
-            console.warn("TaskListsHandler: No userId in query string");
-            return;
-        }
-        
         this.prevBtn?.addEventListener("click", async () => {
             if (this.currentPage > 1) {
                 this.currentPage--;
-                await this.loadPage(this.currentPage);
+                await this.renderPage();
             }
         });
 
         this.nextBtn?.addEventListener("click", async () => {
             this.currentPage++;
-            await this.loadPage(this.currentPage);
-        });
-
-        this.container.querySelectorAll(".task-lists").forEach(taskListEl => {
-            const id = taskListEl.getAttribute("data-id");
-            this.bindControls(taskListEl, id);
+            await this.renderPage();
         });
 
         this.form.addEventListener("submit", this.handleSubmit.bind(this));
+
+        this.renderPage();
     }
 
-    async loadPage(pageNumber) {
-        const offset = (pageNumber - 1) * this.pageSize;
+    async renderPage() {
+        const offset = (this.currentPage - 1) * this.pageSize;
 
         try {
             const response = await fetch(`${this.apiUrl}?offset=${offset}&limit=${this.pageSize}`, {
@@ -61,19 +60,21 @@ export class TaskListsHandler {
             }
 
             const taskLists = await response.json();
-
             this.container.innerHTML = "";
-            taskLists.forEach(t => this.addTaskLists(t));
 
-            this.pageNumber.textContent = `Page ${pageNumber}`;
-            this.prevBtn.disabled = pageNumber === 1;
+            taskLists.forEach(t => {
+                const el = this.createTaskListElement(t);
+                this.container.appendChild(el);
+            });
+
+            this.pageNumber.textContent = `Page ${this.currentPage}`;
+            this.prevBtn.disabled = this.currentPage === 1;
             this.nextBtn.disabled = taskLists.length < this.pageSize;
 
         } catch (err) {
             alert(err.message);
         }
     }
-
 
     async handleSubmit(event) {
         event.preventDefault();
@@ -96,15 +97,15 @@ export class TaskListsHandler {
                 return;
             }
 
-            const taskList = await response.json();
-            this.addTaskLists(taskList);
             this.input.value = "";
+            await this.renderPage();
+
         } catch (err) {
             alert(err.message);
         }
     }
 
-    async deleteTaskLists(id, taskListElement) {
+    async deleteTaskList(id) {
         if (!confirm("Are you sure you want to delete the task list?")) return;
 
         try {
@@ -120,7 +121,8 @@ export class TaskListsHandler {
                 return;
             }
 
-            taskListElement.remove();
+            await this.renderPage();
+
         } catch (err) {
             alert(err.message);
         }
@@ -137,28 +139,49 @@ export class TaskListsHandler {
         });
 
         if (!response.ok) {
-            throw new Error("Error updating task list");
+            alert("Error updating task list");
+            return;
         }
 
-        return await response.json();
+        await this.renderPage();
     }
 
-    bindControls(taskListEl, id) {
-        const deleteBtn = taskListEl.querySelector(".task-lists-delete");
-        if (deleteBtn) {
-            deleteBtn.addEventListener("click", async (e) => {
-                e.stopPropagation();
-                await this.deleteTaskLists(id, taskListEl);
-            });
-        }
+    createTaskListElement(taskList) {
+        const el = document.createElement("div");
+        el.className = "task-lists";
+        el.dataset.id = taskList.id;
 
-        const titleEl = taskListEl.querySelector("h4");
-        const controlsContainer = taskListEl.querySelector(".task-lists-controls");
-        const editBtn = taskListEl.querySelector(".task-lists-edit");
+        const sharedSection = (taskList.sharedWithUserIds?.length ?? 0) > 0
+            ? `<p>Sharing Users:</p><ul>${taskList.sharedWithUserIds.map(id => `<li>${id}</li>`).join("")}</ul>`
+            : `<p>The task list is only available to you.</p>`;
 
-        if (!editBtn || !titleEl || !controlsContainer) return;
+        el.innerHTML = `
+            <div class="task-lists-controls">
+                <div class="task-lists-delete">
+                    <img src="icons/delete.svg" alt="Delete">
+                </div>
+                <div class="task-lists-edit">
+                    <img src="icons/edit.svg" alt="Edit">
+                </div>
+            </div>
+            <h4>${taskList.title}</h4>
+            <p>Created At: ${taskList.createdAt}</p>
+            ${sharedSection}
+        `;
 
-        editBtn.addEventListener("click", () => {
+        this.bindControls(el, taskList.id);
+        return el;
+    }
+
+    bindControls(el, id) {
+        const deleteBtn = el.querySelector(".task-lists-delete");
+        const editBtn = el.querySelector(".task-lists-edit");
+        const titleEl = el.querySelector("h4");
+        const controlsContainer = el.querySelector(".task-lists-controls");
+
+        deleteBtn?.addEventListener("click", async () => await this.deleteTaskList(id));
+
+        editBtn?.addEventListener("click", () => {
             const currentTitle = titleEl.textContent;
 
             const input = document.createElement("input");
@@ -175,12 +198,9 @@ export class TaskListsHandler {
             cancelBtn.className = "task-title-cancel";
 
             titleEl.replaceWith(input);
-            saveBtn.style.marginLeft = "8px";
-            cancelBtn.style.marginLeft = "4px";
-
-            editBtn.style.display = "none";
             controlsContainer.appendChild(saveBtn);
             controlsContainer.appendChild(cancelBtn);
+            editBtn.style.display = "none";
 
             cancelBtn.addEventListener("click", () => {
                 input.replaceWith(titleEl);
@@ -194,50 +214,11 @@ export class TaskListsHandler {
                 if (!newTitle) return;
 
                 try {
-                    const updatedTaskList = await this.updateTaskList(id, newTitle);
-                    const newTaskListEl = this.createTaskListElement(updatedTaskList);
-                    taskListEl.replaceWith(newTaskListEl);
+                    await this.updateTaskList(id, newTitle);
                 } catch (err) {
                     alert(err.message);
                 }
             });
         });
-    }
-
-    addTaskLists(taskList) {
-        const taskListEl = this.createTaskListElement(taskList);
-        this.container.appendChild(taskListEl);
-    }
-
-    createTaskListElement(taskList) {
-        const taskListElement = document.createElement("div");
-        taskListElement.className = "task-lists";
-        taskListElement.setAttribute("data-id", taskList.id);
-
-        const sharedUsers = taskList.sharedWithUserIds ?? [];
-
-        const sharedSection = sharedUsers.length > 0
-            ? `<p>Sharing Users:</p>
-               <ul>
-                   ${sharedUsers.map(userId => `<li>${userId}</li>`).join("")}
-               </ul>`
-            : `<p>The task list is only available to you.</p>`;
-
-        taskListElement.innerHTML = `
-            <div class="task-lists-controls">
-                <div class="task-lists-delete" id="task-list-delete">
-                    <img src="icons/delete.svg" alt="Delete">
-                </div>
-                <div class="task-lists-edit" id="task-list-edit">
-                    <img src="icons/edit.svg" alt="Edit">
-                </div>
-            </div>
-            <h4>${taskList.title}</h4>
-            <p>Created At: ${taskList.createdAt}</p>
-            ${sharedSection}
-        `;
-
-        this.bindControls(taskListElement, taskList.id);
-        return taskListElement;
     }
 }

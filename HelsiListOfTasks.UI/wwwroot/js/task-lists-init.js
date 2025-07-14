@@ -1,10 +1,14 @@
 import { TaskListsHandler } from './task-lists-handler.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     const taskListsHandler = new TaskListsHandler({
-        formId: "task-lists-form",
-        inputId: "task-lists-title",
+        formElement: document.getElementById("task-lists-form"),
+        inputElement: document.getElementById("task-lists-title"),
         apiUrl: "https://localhost:7025/task-lists",
-        containerSelector: ".task-lists-collection"
+        containerElement: document.querySelector(".task-lists-collection"),
+        prevPageButton: document.getElementById("prev-page"),
+        nextPageButton: document.getElementById("next-page"),
+        pageNumberElement: document.getElementById("page-number")
     });
 
     taskListsHandler.init();
