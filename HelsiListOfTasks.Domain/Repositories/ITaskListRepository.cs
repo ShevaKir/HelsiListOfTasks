@@ -5,6 +5,7 @@ namespace HelsiListOfTasks.Domain.Repositories;
 public interface ITaskListRepository
 {
     Task<TaskList?> GetByIdAsync(string id);
+    Task<List<TaskList>> GetPagedForUserAsync(string userId, int offset, int limit);
     Task<List<TaskList>> GetByOwnerAsync(string ownerId);
     Task<List<TaskList>> GetAccessibleListsAsync(string userId);
     Task<List<TaskList>> GetAllWithSharedUserAsync(string userId);

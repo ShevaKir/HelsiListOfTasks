@@ -35,15 +35,18 @@ public class TaskListsController(ITaskListService taskListService) : ControllerB
         if (result is null) return NotFound();
         return Ok(result);
     }
-
+    
     [HttpGet]
-    public async Task<IActionResult> GetForUser([FromHeader(Name = "X-User-Id")] string? userId)
+    public async Task<IActionResult> GetForUser(
+        [FromHeader(Name = "X-User-Id")] string? userId,
+        [FromQuery] int offset = 0,
+        [FromQuery] int limit = 3)
     {
-        if (userId is null)
+        if (string.IsNullOrEmpty(userId))
             return BadRequest("Missing X-User-Id header");
 
-        var lists = await taskListService.GetForUserAsync(userId);
-        return Ok(lists);
+        var result = await taskListService.GetPagedForUserAsync(userId, offset, limit);
+        return Ok(result);
     }
 
     [HttpPut("{id}")]

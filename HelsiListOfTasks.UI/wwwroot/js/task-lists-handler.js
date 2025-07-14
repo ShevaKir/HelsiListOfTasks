@@ -1,10 +1,17 @@
 export class TaskListsHandler {
-    constructor({formId, inputId, apiUrl, containerSelector}) {
+    constructor({formId, inputId, apiUrl, containerSelector, pageSize = 3}) {
         this.form = document.getElementById(formId);
         this.input = document.getElementById(inputId);
         this.apiUrl = apiUrl;
         this.container = document.querySelector(containerSelector);
         this.userId = new URLSearchParams(window.location.search).get("userId");
+        
+        this.pageSize = pageSize;
+        this.currentPage = 1;
+
+        this.prevBtn = document.getElementById("prev-page");
+        this.nextBtn = document.getElementById("next-page");
+        this.pageNumber = document.getElementById("page-number");
     }
 
     init() {
@@ -17,6 +24,18 @@ export class TaskListsHandler {
             console.warn("TaskListsHandler: No userId in query string");
             return;
         }
+        
+        this.prevBtn?.addEventListener("click", async () => {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                await this.loadPage(this.currentPage);
+            }
+        });
+
+        this.nextBtn?.addEventListener("click", async () => {
+            this.currentPage++;
+            await this.loadPage(this.currentPage);
+        });
 
         this.container.querySelectorAll(".task-lists").forEach(taskListEl => {
             const id = taskListEl.getAttribute("data-id");
@@ -25,6 +44,36 @@ export class TaskListsHandler {
 
         this.form.addEventListener("submit", this.handleSubmit.bind(this));
     }
+
+    async loadPage(pageNumber) {
+        const offset = (pageNumber - 1) * this.pageSize;
+
+        try {
+            const response = await fetch(`${this.apiUrl}?offset=${offset}&limit=${this.pageSize}`, {
+                headers: {
+                    "X-User-Id": this.userId
+                }
+            });
+
+            if (!response.ok) {
+                alert("Error loading task lists");
+                return;
+            }
+
+            const taskLists = await response.json();
+
+            this.container.innerHTML = "";
+            taskLists.forEach(t => this.addTaskLists(t));
+
+            this.pageNumber.textContent = `Page ${pageNumber}`;
+            this.prevBtn.disabled = pageNumber === 1;
+            this.nextBtn.disabled = taskLists.length < this.pageSize;
+
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
 
     async handleSubmit(event) {
         event.preventDefault();

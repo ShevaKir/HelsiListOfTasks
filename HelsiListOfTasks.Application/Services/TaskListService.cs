@@ -21,6 +21,11 @@ public class TaskListService(ITaskListRepository repository) : ITaskListService
         return list;
     }
 
+    public Task<List<TaskList>> GetPagedForUserAsync(string userId, int offset, int limit)
+    {
+        return repository.GetPagedForUserAsync(userId, offset, limit);
+    }
+
     public Task<List<TaskList>> GetForUserAsync(string userId)
     {
         return repository.GetAccessibleListsAsync(userId);
