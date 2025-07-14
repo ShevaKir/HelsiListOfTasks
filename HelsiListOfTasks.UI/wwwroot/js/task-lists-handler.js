@@ -236,7 +236,7 @@ export class TaskListsHandler {
         const editBtn = el.querySelector(".task-lists-edit");
         const titleEl = el.querySelector("h4");
         const controlsContainer = el.querySelector(".task-lists-controls");
-        const shareBtn = el.querySelector("#task-list-share");
+        const shareBtn = el.querySelector(".task-lists-share");
 
         deleteBtn?.addEventListener("click", async () => await this.deleteTaskList(id));
 

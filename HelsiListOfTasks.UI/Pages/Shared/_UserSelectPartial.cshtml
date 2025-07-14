@@ -3,7 +3,7 @@
     var currentUserId = Context.Request.Query["userId"].ToString();
 }
 
-<select id="user-select" class="user-select">
+<select id="user-select" class="user-select" hidden>
     <option disabled selected value="">Select a user</option>
     @foreach (var user in Model.Where(u => u.Id != currentUserId))
     {
