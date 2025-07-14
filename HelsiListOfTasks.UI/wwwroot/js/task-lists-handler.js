@@ -18,6 +18,17 @@ export class TaskListsHandler {
             return;
         }
 
+        this.container.querySelectorAll(".task-lists").forEach(taskLists => {
+            const id = taskLists.getAttribute("data-id");
+            const deleteBtn = taskLists.querySelector(".task-lists-delete");
+            if (id && deleteBtn) {
+                deleteBtn.addEventListener("click", async (e) => {
+                    e.stopPropagation();
+                    await this.deleteTaskLists(id, taskLists);
+                });
+            }
+        });
+
         this.form.addEventListener("submit", this.handleSubmit.bind(this));
     }
 
@@ -49,6 +60,25 @@ export class TaskListsHandler {
         }
     }
 
+    async deleteTaskLists(id, taskListElement) {
+        if (!confirm("Are you sure you want to delete the task lists?")) return;
+
+        try {
+            const response = await fetch(`${this.apiUrl}/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "X-User-Id": this.userId
+                },
+            });
+
+            if (!response.ok) alert("Error removing task lists");
+
+            taskListElement.remove();
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+    
     addTaskLists(taskList) {
         const taskListElement = document.createElement("div");
         taskListElement.className = "task-lists";
@@ -73,7 +103,12 @@ export class TaskListsHandler {
             <p>Created At: ${taskList.createdAt}</p>
             ${sharedSection}
         `;
-        
+
+        const deleteBtn = taskListElement.querySelector(".task-lists-delete");
+        deleteBtn.addEventListener("click", async () => {
+            await this.deleteTaskLists(taskList.id, taskListElement);
+        });
+
         this.container.appendChild(taskListElement);
     }
 

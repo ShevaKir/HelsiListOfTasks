@@ -45,7 +45,7 @@ public class TaskListsController(ITaskListService taskListService) : ControllerB
         var lists = await taskListService.GetForUserAsync(userId);
         return Ok(lists);
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] TaskListRequest request,
         [FromHeader(Name = "X-User-Id")] string? userId)
@@ -62,5 +62,16 @@ public class TaskListsController(ITaskListService taskListService) : ControllerB
 
         var success = await taskListService.UpdateAsync(updated, userId);
         return success ? Ok() : Forbid();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id, 
+        [FromHeader(Name = "X-User-Id")] string? userId)
+    {
+        if (userId is null)
+            return BadRequest("Missing X-User-Id header");
+        
+        var success = await taskListService.DeleteAsync(id, userId);
+        return success ? NoContent() : NotFound();
     }
 }
