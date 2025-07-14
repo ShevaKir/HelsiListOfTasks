@@ -1,0 +1,56 @@
+.task-lists {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    margin: 20px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    cursor: default;
+}
+
+.task-lists-delete, .task-lists-edit {
+    display: flex;
+    justify-content: end;
+}
+
+.task-lists-delete img, .task-lists-edit img {
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+}
+
+.task-lists:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.task-lists h4 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.task-lists p {
+    margin: 8px 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.task-lists ul {
+    padding-left: 20px;
+    margin: 8px 0;
+}
+
+.task-lists ul li {
+    font-size: 0.9rem;
+    color: #444;
+    list-style-type: disc;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    align-items: center;
+}

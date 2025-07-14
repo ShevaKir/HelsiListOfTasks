@@ -19,6 +19,12 @@ public static class Program
             var httpClient = httpClientFactory.CreateClient("WebApi");
             return new UserService(httpClient);
         });
+        builder.Services.AddScoped<ITaskListsService, TaskListsService>(sp =>
+        {
+            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+            var httpClient = httpClientFactory.CreateClient("WebApi");
+            return new TaskListsService(httpClient);
+        });
 
         var app = builder.Build();
 

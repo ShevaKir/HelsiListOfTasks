@@ -3,13 +3,16 @@
 <div class="user-cards">
     @foreach (var user in Model)
     {
-        <div class="user-card">
+        <div class="user-card" data-id="@user.Id">
+            <div class="user-card-delete" id="user-delete">
+                <img src="icons/delete.svg" alt="Delete">
+            </div>
             <h4>@user.Name</h4>
             <p>ID: @user.Id</p>
         </div>
     }
 </div>
 <form id="user-form">
-    <input type="text" id="user-name" placeholder="Name" required />
+    <input type="text" id="user-name" placeholder="Name" required/>
     <button type="submit">Add</button>
 </form>

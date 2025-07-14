@@ -6,10 +6,11 @@
     <title>@ViewData["Title"] - HelsiListOfTasks.UI</title>
     <link rel="stylesheet" href="~/css/normalize.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/user.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/task-lists.css" asp-append-version="true"/>
 </head>
 <body>
 @RenderBody()
-<script type="module" src="~/js/site.js" asp-append-version="true"></script>
+<script type="module" src="~/js/user-init.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

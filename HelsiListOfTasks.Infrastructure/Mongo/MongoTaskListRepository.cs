@@ -23,6 +23,21 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
             .ToListAsync();
     }
 
+    
+    public async Task<List<TaskList>> GetPagedForUserAsync(string userId, int offset, int limit)
+    {
+        var filter = Builders<TaskList>.Filter.Or(
+            Builders<TaskList>.Filter.Eq(x => x.OwnerId, userId),
+            Builders<TaskList>.Filter.AnyEq(x => x.SharedWithUserIds, userId)
+        );
+
+        return await _collection.Find(filter)
+            .SortByDescending(x => x.CreatedAt)
+            .Skip(offset)
+            .Limit(limit)
+            .ToListAsync();
+    }
+    
     public Task<List<TaskList>> GetAccessibleListsAsync(string userId)
     {
         var filter = Builders<TaskList>.Filter.Or(
@@ -34,6 +49,12 @@ public class MongoTaskListRepository(MongoDbContext context) : ITaskListReposito
             .Find(filter)
             .SortByDescending(x => x.CreatedAt)
             .ToListAsync();
+    }
+
+    public Task<List<TaskList>> GetAllWithSharedUserAsync(string userId)
+    {
+        var filter = Builders<TaskList>.Filter.AnyEq(x => x.SharedWithUserIds, userId);
+        return _collection.Find(filter).ToListAsync();
     }
 
     public Task CreateAsync(TaskList list)
