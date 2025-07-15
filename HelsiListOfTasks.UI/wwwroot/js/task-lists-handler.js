@@ -197,7 +197,15 @@ export class TaskListsHandler {
         if (isCollaborative) el.classList.add("task-lists-collaboration");
 
         const sharedSection = (taskList.sharedWithUserIds?.length ?? 0) > 0
-            ? `<p>Sharing Users:</p><ul>${taskList.sharedWithUserIds.map(id => `<li>${id}</li>`).join("")}</ul>`
+            ? `<p>Sharing Users:</p><ul>${taskList.sharedWithUserIds.map(id =>
+                `<li>                            
+                    <div class="task-lists-sharing">
+                       <p>${id}</p>
+                        <div class="task-lists-delete-sharing">
+                            <img src="icons/delete.svg" alt="Delete">
+                        </div>
+                    </div>
+                </li>`).join("")}</ul>`
             : `<p>The task list is only available to you.</p>`;
 
         const controlsHtml = isCollaborative ? "" : `
@@ -282,6 +290,33 @@ export class TaskListsHandler {
 
         shareBtn?.addEventListener("click", async () => {
             await this.handleShare(id);
+        });
+
+        el.querySelectorAll(".task-lists-delete-sharing").forEach(button => {
+            button.addEventListener("click", async () => {
+                debugger
+                const userDiv = button.closest(".task-lists-sharing");
+                const targetUserId = userDiv?.querySelector("p")?.textContent?.trim();
+                if (!targetUserId) return;
+
+                try {
+                    const response = await fetch(`${this.apiUrl}/${id}/sharing/${targetUserId}`, {
+                        method: "DELETE",
+                        headers: {
+                            "X-User-Id": this.userId
+                        }
+                    });
+
+                    if (!response.ok) {
+                        alert("Error removing share");
+                        return;
+                    }
+
+                    await this.renderPage();
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
         });
     }
 }

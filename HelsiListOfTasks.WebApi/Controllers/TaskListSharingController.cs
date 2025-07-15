@@ -26,10 +26,9 @@ public class TaskListSharingController(ITaskListSharingService sharingService) :
         if (ownerId is null)
             return BadRequest("Missing X-User-Id header");
 
-        var result = await sharingService.RemoveShareAsync(taskListId, targetUserId, ownerId);
+        var result = await sharingService.RemoveShareAsync(taskListId, ownerId, targetUserId);
         return result ? Ok() : Forbid();
     }
-
 
     [HttpGet]
     public async Task<IActionResult> GetSharedUsers(string taskListId,

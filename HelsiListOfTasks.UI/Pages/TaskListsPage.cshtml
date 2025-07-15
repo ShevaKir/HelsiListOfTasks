@@ -5,54 +5,7 @@
 }
 
 <h2>Task Lists</h2>
-@{
-    var currentUserId = Model.UserId;
-}
-<div class="task-lists-collection">
-    @foreach (var taskList in Model.TaskLists)
-    {
-        var isCollaborative = taskList.OwnerId != currentUserId;
-        <div class="task-lists @(isCollaborative ? "task-lists-collaboration" : "")" data-id="@taskList.Id" data-owner-id="@taskList.OwnerId">
-            <div class="task-lists-controls">
-                @if (!isCollaborative)
-                {
-                    <div class="task-lists-share" id="task-list-share">
-                        <img src="icons/share.svg" alt="Share">
-                    </div>
-                    <div class="task-lists-edit" id="task-list-edit">
-                        <img src="icons/edit.svg" alt="Edit">
-                    </div>
-                    <div class="task-lists-delete" id="task-list-delete">
-                        <img src="icons/delete.svg" alt="Delete">
-                    </div>
-                }
-            </div>
-            <h4>@taskList.Title</h4>
-            <p>Created At: @taskList.CreatedAt</p>
-            @if (isCollaborative)
-            {
-                <p>
-                    <strong>Collaborative (owned by @taskList.OwnerId)</strong>
-                </p>
-            }
-
-            @if (taskList.SharedWithUserIds.Count != 0)
-            {
-                <p>Sharing Users:</p>
-                <ul>
-                    @foreach (var sharingUser in taskList.SharedWithUserIds)
-                    {
-                        <li>@sharingUser</li>
-                    }
-                </ul>
-            }
-            else
-            {
-                <p>The task list is only available to you.</p>
-            }
-        </div>
-    }
-</div>
+<div class="task-lists-collection"></div>
 
 @await Html.PartialAsync("_UserSelectPartial", Model.Users)
 
@@ -70,3 +23,4 @@
 @section Scripts {
     <script type="module" src="~/js/task-lists-init.js" asp-append-version="true"></script>
 }
+

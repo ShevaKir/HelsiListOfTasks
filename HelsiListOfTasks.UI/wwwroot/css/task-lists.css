@@ -46,10 +46,16 @@
     justify-content: end;
 }
 
-.task-lists-delete img, .task-lists-edit img, .task-lists-share img {
+.task-lists-delete img, .task-lists-edit img, .task-lists-share img, .task-lists-delete-sharing img {
     height: 24px;
     width: 24px;
     cursor: pointer;
+}
+
+.task-lists-sharing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .task-lists:hover {
