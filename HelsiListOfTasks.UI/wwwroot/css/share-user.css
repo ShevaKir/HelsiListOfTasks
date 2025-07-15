@@ -1,0 +1,40 @@
+.share-user-select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    width: fit-content;
+}
+
+.share-user-select-wrapper label {
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-right: 0.25rem;
+}
+
+.user-select {
+    padding: 6px 10px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+}
+
+#share-user-btn {
+    padding: 6px 12px;
+    background-color: #2d89ef;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#share-user-btn:hover {
+    background-color: #1b64c2;
+}

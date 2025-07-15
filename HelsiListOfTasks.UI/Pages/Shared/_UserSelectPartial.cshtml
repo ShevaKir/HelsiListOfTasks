@@ -3,10 +3,13 @@
     var currentUserId = Context.Request.Query["userId"].ToString();
 }
 
-<select id="user-select" class="user-select" hidden>
-    <option disabled selected value="">Select a user</option>
-    @foreach (var user in Model.Where(u => u.Id != currentUserId))
-    {
-        <option value="@user.Id">@user.Name (@user.Id)</option>
-    }
-</select>
+<div class="share-user-select-wrapper">
+    <label for="user-select">Share with user:</label>
+    <select id="user-select" class="user-select" hidden>
+        <option disabled selected value="">Select a user</option>
+        @foreach (var user in Model.Where(u => u.Id != currentUserId))
+        {
+            <option value="@user.Id">@user.Name (@user.Id)</option>
+        }
+    </select>
+</div>
