@@ -15,6 +15,17 @@ public class TaskListServiceTests
         _repositoryMock = new Mock<ITaskListRepository>();
         _service = new TaskListService(_repositoryMock.Object);
     }
+    
+    [Test]
+    public async Task CreateAsync_Should_SaveToRepository_WhenValid()
+    {
+        var newTaskList = new TaskList { Id = "1", Title = "Test", OwnerId = "123" };
+        _repositoryMock.Setup(r => r.CreateAsync(newTaskList)).Returns(Task.CompletedTask);
+
+        await _service.CreateAsync(newTaskList);
+
+        _repositoryMock.Verify(r => r.CreateAsync(newTaskList), Times.Once);
+    }
 
     [Test]
     public async Task GetByIdAsync_Should_ReturnList_WhenUserIsOwner()
