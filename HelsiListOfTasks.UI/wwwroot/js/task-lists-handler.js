@@ -188,6 +188,7 @@ export class TaskListsHandler {
 
 
     createTaskListElement(taskList) {
+        debugger
         const el = document.createElement("div");
         el.className = "task-lists";
         el.dataset.id = taskList.id;
@@ -197,16 +198,23 @@ export class TaskListsHandler {
         if (isCollaborative) el.classList.add("task-lists-collaboration");
 
         const sharedSection = (taskList.sharedWithUserIds?.length ?? 0) > 0
-            ? `<p>Sharing Users:</p><ul>${taskList.sharedWithUserIds.map(id =>
-                `<li>                            
+            ? `<p>Sharing Users:</p><ul>${
+                taskList.sharedWithUserIds.map(id => {
+                    const canRemove = this.userId === taskList.ownerId || this.userId === id;
+                    return `
+                <li>
                     <div class="task-lists-sharing">
-                       <p>${id}</p>
+                        <p>${id}</p>
+                        ${canRemove ? `
                         <div class="task-lists-delete-sharing">
                             <img src="icons/delete.svg" alt="Delete">
-                        </div>
+                        </div>` : ""}
                     </div>
-                </li>`).join("")}</ul>`
+                </li>`;
+                }).join("")
+            }</ul>`
             : `<p>The task list is only available to you.</p>`;
+
 
         const controlsHtml = isCollaborative ? "" : `
         <div class="task-lists-share">
@@ -235,6 +243,7 @@ export class TaskListsHandler {
     `;
 
         if (!isCollaborative) this.bindControls(el, taskList.id);
+        this.bindSharingControls(el, taskList.id);
         return el;
     }
 
@@ -291,16 +300,17 @@ export class TaskListsHandler {
         shareBtn?.addEventListener("click", async () => {
             await this.handleShare(id);
         });
+    }
 
+    bindSharingControls(el, taskListId) {
         el.querySelectorAll(".task-lists-delete-sharing").forEach(button => {
             button.addEventListener("click", async () => {
-                debugger
                 const userDiv = button.closest(".task-lists-sharing");
                 const targetUserId = userDiv?.querySelector("p")?.textContent?.trim();
                 if (!targetUserId) return;
 
                 try {
-                    const response = await fetch(`${this.apiUrl}/${id}/sharing/${targetUserId}`, {
+                    const response = await fetch(`${this.apiUrl}/${taskListId}/sharing/${targetUserId}`, {
                         method: "DELETE",
                         headers: {
                             "X-User-Id": this.userId
@@ -319,4 +329,5 @@ export class TaskListsHandler {
             });
         });
     }
+
 }

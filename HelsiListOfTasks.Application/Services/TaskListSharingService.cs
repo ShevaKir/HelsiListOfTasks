@@ -17,14 +17,26 @@ public class TaskListSharingService(
         return true;
     }
 
-    public async Task<bool> RemoveShareAsync(string taskListId, string ownerId, string targetUserId)
+    public async Task<bool> RemoveShareAsync(string taskListId, string requesterUserId, string targetUserId)
     {
         var taskList = await taskListRepository.GetByIdAsync(taskListId);
-        if (taskList is null || taskList.OwnerId != ownerId)
+        if (taskList is null)
             return false;
 
-        await sharingRepository.RemoveShareAsync(taskListId, targetUserId);
-        return true;
+        if (taskList.OwnerId == requesterUserId)
+        {
+            await sharingRepository.RemoveShareAsync(taskListId, targetUserId);
+            return true;
+        }
+
+        if (requesterUserId == targetUserId &&
+            taskList.SharedWithUserIds.Contains(requesterUserId))
+        {
+            await sharingRepository.RemoveShareAsync(taskListId, requesterUserId);
+            return true;
+        }
+
+        return false;
     }
 
     public async Task<List<string>> GetSharedUserIdsAsync(string taskListId, string ownerId)
