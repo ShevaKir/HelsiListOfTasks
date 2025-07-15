@@ -62,16 +62,35 @@ public class TaskListSharingServiceTests
         {
             Id = "1",
             OwnerId = "owner",
-            SharedWithUserIds = new List<string> { "requester" }
+            SharedWithUserIds = ["user"]
         };
 
         _taskListRepositoryMock.Setup(x => x.GetByIdAsync("1")).ReturnsAsync(taskList);
 
-        var result = await _service.RemoveShareAsync("1", "requester", "target");
+        var result = await _service.RemoveShareAsync("1", "owner", "target");
 
         Assert.That(result, Is.True);
         _sharingRepositoryMock.Verify(x => x.RemoveShareAsync("1", "target"), Times.Once);
     }
+    
+    [Test]
+    public async Task RemoveShareAsync_ShouldAllowUserToRemoveThemself_WhenShared()
+    {
+        var taskList = new TaskList
+        {
+            Id = "1",
+            OwnerId = "owner",
+            SharedWithUserIds = ["user123"]
+        };
+
+        _taskListRepositoryMock.Setup(x => x.GetByIdAsync("1")).ReturnsAsync(taskList);
+
+        var result = await _service.RemoveShareAsync("1", "user123", "user123");
+
+        Assert.That(result, Is.True);
+        _sharingRepositoryMock.Verify(x => x.RemoveShareAsync("1", "user123"), Times.Once);
+    }
+
 
     [Test]
     public async Task RemoveShareAsync_ShouldReturnFalse_WhenRequesterHasNoAccess()

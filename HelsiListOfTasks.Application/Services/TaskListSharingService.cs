@@ -17,22 +17,22 @@ public class TaskListSharingService(
         return true;
     }
 
-    public async Task<bool> RemoveShareAsync(string taskListId, string requesterUserId, string targetUserId)
+    public async Task<bool> RemoveShareAsync(string taskListId, string ownerId, string targetUserId)
     {
         var taskList = await taskListRepository.GetByIdAsync(taskListId);
         if (taskList is null)
             return false;
 
-        if (taskList.OwnerId == requesterUserId)
+        if (taskList.OwnerId == ownerId)
         {
             await sharingRepository.RemoveShareAsync(taskListId, targetUserId);
             return true;
         }
 
-        if (requesterUserId == targetUserId &&
-            taskList.SharedWithUserIds.Contains(requesterUserId))
+        if (ownerId == targetUserId &&
+            taskList.SharedWithUserIds.Contains(ownerId))
         {
-            await sharingRepository.RemoveShareAsync(taskListId, requesterUserId);
+            await sharingRepository.RemoveShareAsync(taskListId, ownerId);
             return true;
         }
 
